@@ -1,0 +1,27 @@
+<?php
+include 'db.php';
+
+$type = $_GET['type'];
+$email = $_GET['email'];
+
+if ($type == 'gastos') {
+    $sql = "SELECT * FROM transacao WHERE tipo = 'gasto' AND idConta IN (SELECT id FROM conta WHERE emailUsuario = '$email')";
+} elseif ($type == 'economias') {
+    $sql = "SELECT * FROM economia WHERE usuario_email = '$email'";
+} elseif ($type == 'investimentos') {
+    $sql = "SELECT * FROM investimento WHERE usuario_email = '$email'";
+}
+
+$result = $conn->query($sql);
+$data = [];
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+}
+
+echo json_encode($data);
+
+$conn->close();
+?>
